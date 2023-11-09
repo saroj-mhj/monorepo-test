@@ -34,9 +34,7 @@ on:
           - 'rounding'
 
   pull_request:
-    types: [synchronize, closed, opened]
-    branches:
-      - main
+    branches: [main]
     paths:
       - 'services/**'
 
