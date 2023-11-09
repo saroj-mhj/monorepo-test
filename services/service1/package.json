@@ -1,0 +1,10 @@
+{
+  "name": "service1",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "saroj",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo 'is inside service1'"
+  }
+}
