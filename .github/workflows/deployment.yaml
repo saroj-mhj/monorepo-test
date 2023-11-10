@@ -89,7 +89,7 @@ jobs:
       environment: ${{ env.changed_environment }}
 
   build:
-    needs: [detect-changed-files]
+    needs: [detect-changed-files, set-environment]
     runs-on: ubuntu-latest
     environment: ${{ needs.set-environment.outputs.environment }}
 
