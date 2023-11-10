@@ -20,7 +20,7 @@ on:
           - 'service1'
           - 'service2'
 
-  pull_request:
+  push:
     branches: [dev, main]
     paths:
       - 'services/**'
@@ -67,37 +67,33 @@ jobs:
     outputs:
       services: ${{ env.changed_services }}
 
+  set-environment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Environment
+        id: set-environment
+        run: |
+          is_manual_run=$(echo ${{ contains(github.event_name, 'workflow_dispatch') }})
+          ENVIRONMENT=""
+
+          if [ $is_manual_run == 'true' ]; then
+            input_environment=${{ github.event.inputs.environment }}
+          else
+            input_environment=${{ github.event.inputs.environment || github.ref_name }}
+          fi
+
+          echo "changes: $CHANGES"
+          echo "changed_environment=${CHANGES}" >> $GITHUB_ENV
+
+    outputs:
+      environment: ${{ env.changed_environment }}
+
   build:
     needs: [detect-changed-files]
     runs-on: ubuntu-latest
-
-    strategy:
-      max-parallel: 1 # Run jobs in matrix sequentially.
-      fail-fast: false
-      matrix:
-        service: ${{ fromJson(needs.detect-changed-files.outputs.services) }}
-
-    defaults:
-      run:
-        working-directory: ./services/${{ matrix.service }}
+    environment: ${{ needs.set-environment.outputs.environment }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Use Node 16
-        uses: actions/setup-node@v2
-        with:
-          always-auth: true
-          node-version: '16'
-          registry-url: 'https://npm.pkg.github.com'
-          cache: 'yarn'
-          cache-dependency-path: '**/yarn.lock'
-
-      - name: Install dependencies
-        run: yarn
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.LAUDIO_GITHUB_TOKEN }}
-
-      - name: Build
-        run: yarn test
+      - name: Echo env
+        id: asd
+        run: echo ${{ needs.set-environment.outputs.environment }}
