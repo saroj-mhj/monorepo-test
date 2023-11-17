@@ -85,19 +85,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Use Node 16
-        uses: actions/setup-node@v2
-        with:
-          always-auth: true
-          node-version: '16'
-          registry-url: 'https://npm.pkg.github.com'
-          cache: 'yarn'
-          cache-dependency-path: '**/yarn.lock'
+      - name: Use Bun
+        uses: oven-sh/setup-bun@v1
 
-      - name: Install dependencies
-        run: yarn
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.LAUDIO_GITHUB_TOKEN }}
+      - name: Install Dependencies
+        run: bun i
 
-      - name: Build
-        run: yarn test
+      - name: Run Linter
+        run: bun lint
+
+      - name: Run Build
+        run: bun run build
