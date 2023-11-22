@@ -82,8 +82,10 @@ jobs:
             input_environment=${{ github.event.inputs.environment || github.ref_name }}
           fi
 
-          echo "changes: $CHANGES"
-          echo "changed_environment=${CHANGES}" >> $GITHUB_ENV
+          ENVIRONMENT=$input_environment
+
+          echo "changes: $ENVIRONMENT"
+          echo "changed_environment=${ENVIRONMENT}" >> $GITHUB_ENV
 
     outputs:
       environment: ${{ env.changed_environment }}
